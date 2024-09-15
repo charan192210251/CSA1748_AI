@@ -1,81 +1,80 @@
-print("\n")
-print("\tGame Start\nNow the task is to move all of them to right side of the river")
-print("rules:\n1. The boat can carry at most two people\n2. If cannibals num greater than missionaries then the cannibals would eat the missionaries\n3. The boat cannot cross the river by itself with no people on board")
-lM = 3
-lC = 3
-rM=0
-rC=0
-userM = 0
-userC = 0
-k = 0
-print("\nM M M C C C |	 --- | \n")
-try:
-	while(True):
-		while(True):
-			print("Left side -> right side river travel")
-			uM = int(input("Enter number of Missionaries travel => "))
-			uC = int(input("Enter number of Cannibals travel => "))
-			if((uM==0)and(uC==0)):
-				print("Empty travel not possible")
-				print("Re-enter : ")
-			elif(((uM+uC) <= 2)and((lM-uM)>=0)and((lC-uC)>=0)):
-				break
-			else:
-				print("Wrong input re-enter : ")
-		lM = (lM-uM)
-		lC = (lC-uC)
-		rM += uM
-		rC += uC
-		print("\n")
-		for i in range(0,lM):
-			print("M ",end="")
-		for i in range(0,lC):
-			print("C ",end="")
-		print("| --> | ",end="")
-		for i in range(0,rM):
-			print("M ",end="")
-		for i in range(0,rC):
-			print("C ",end="")
-		print("\n")
-		k +=1
-		if(((lC==3)and (lM == 1))or((lC==3)and(lM==2))or((lC==2)and(lM==1))or((rC==3)and (rM == 1))or((rC==3)and(rM==2))or((rC==2)and(rM==1))):
-			print("Cannibals eat missionaries:\nYou lost the game")
-			break
-		if((rM+rC) == 6):
-			print("You won the game : \n\tCongrats")
-			print("Total attempt")
-			print(k)
-			break
-		while(True):
-			print("Right side -> Left side river travel")
-			userM = int(input("Enter number of Missionaries travel => "))
-			userC = int(input("Enter number of Cannibals travel => "))
-			if((userM==0)and(userC==0)):
-					print("Empty travel not possible")
-					print("Re-enter : ")
-			elif(((userM+userC) <= 2)and((rM-userM)>=0)and((rC-userC)>=0)):
-				break
-			else:
-				print("Wrong input re-enter : ")
-		lM += userM
-		lC += userC
-		rM -= userM
-		rC -= userC
+from collections import deque
 
-		k +=1
-		print("\n")
-		for i in range(0,lM):
-			print("M ",end="")
-		for i in range(0,lC):
-			print("C ",end="")
-		print("| <-- | ",end="")
-		for i in range(0,rM):
-			print("M ",end="")
-		for i in range(0,rC):
-			print("C ",end="")
-		print("\n")
-		if(((lC==3)and (lM == 1))or((lC==3)and(lM==2))or((lC==2)and(lM==1))or((rC==3)and (rM == 1))or((rC==3)and(rM==2))or((rC==2)and(rM==1))):
-			print("Cannibals eat missionaries:\nYou lost the game")
-			break
-except EOFError as e:
-	print("\nInvalid input please retry !!")
+
+def is_valid_state(m, c, b, m_total, c_total):
+    """ Check if the state is valid """
+    if m < 0 or c < 0 or m > m_total or c > c_total:
+        return False
+    if m > 0 and m < c:
+        return False
+    if (m_total - m) > 0 and (m_total - m) < (c_total - c):
+        return False
+    return True
+
+
+def get_possible_moves(state, m_total, c_total):
+    """ Generate possible moves from the current state """
+    m, c, b = state
+    if b == 1:  # Boat on the left side
+        moves = [
+            (m - 2, c, 0),  # 2 missionaries
+            (m - 1, c - 1, 0),  # 1 missionary and 1 cannibal
+            (m, c - 2, 0),  # 2 cannibals
+            (m - 1, c, 0),  # 1 missionary
+            (m, c - 1, 0)  # 1 cannibal
+        ]
+    else:  # Boat on the right side
+        moves = [
+            (m + 2, c, 1),  # 2 missionaries
+            (m + 1, c + 1, 1),  # 1 missionary and 1 cannibal
+            (m, c + 2, 1),  # 2 cannibals
+            (m + 1, c, 1),  # 1 missionary
+            (m, c + 1, 1)  # 1 cannibal
+        ]
+    return [(new_m, new_c, new_b) for new_m, new_c, new_b in moves if
+            is_valid_state(new_m, new_c, new_b, m_total, c_total)]
+
+
+def bfs(m_total, c_total):
+    """ Breadth-First Search to solve the Missionaries and Cannibals problem """
+    initial_state = (m_total, c_total, 1)
+    goal_state = (0, 0, 0)
+    queue = deque([(initial_state, [])])
+    visited = set()
+
+    while queue:
+        (state, path) = queue.popleft()
+        if state == goal_state:
+            print("You Win!")
+            return path + [state]
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+        for move in get_possible_moves(state, m_total, c_total):
+            queue.append((move, path + [state]))
+
+    return None
+
+
+def main():
+    m_total = int(input("Enter the number of missionaries: "))
+    c_total = int(input("Enter the number of cannibals: "))
+
+    if m_total < 1 or c_total < 1:
+        print("The number of missionaries and cannibals must be at least 1.")
+        return
+
+    solution = bfs(m_total, c_total)
+    if solution:
+        print("Solution found:")
+        for step in solution:
+            print(step)
+    else:
+        print("No solution found.")
+
+
+if __name__ == "__main__":
+    main()
+print("You win the game !!!")
