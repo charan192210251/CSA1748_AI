@@ -1,15 +1,12 @@
-import numpy as np
-
-
 def create_board():
-    return np.array([[0, 0, 0],
-                     [0, 0, 0],
-                     [0, 0, 0]])
+    return [[0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]]
 
 
 def place_player(board, player, row, col):
-    if board[row, col] == 0:
-        board[row, col] = player
+    if board[row][col] == 0:
+        board[row][col] = player
         return True
     else:
         print("That position is already taken. Try again.")
@@ -18,20 +15,20 @@ def place_player(board, player, row, col):
 
 def row_win(board, player):
     for row in board:
-        if np.all(row == player):
+        if all([cell == player for cell in row]):
             return True
     return False
 
 
 def col_win(board, player):
     for col in range(len(board)):
-        if np.all(board[:, col] == player):
+        if all([board[row][col] == player for row in range(len(board))]):
             return True
     return False
 
 
 def diag_win(board, player):
-    if np.all(np.diag(board) == player) or np.all(np.diag(np.fliplr(board)) == player):
+    if all([board[i][i] == player for i in range(len(board))]) or all([board[i][len(board) - 1 - i] == player for i in range(len(board))]):
         return True
     return False
 
@@ -41,7 +38,7 @@ def evaluate(board):
     for player in [1, 2]:
         if row_win(board, player) or col_win(board, player) or diag_win(board, player):
             winner = player
-    if np.all(board != 0) and winner == 0:
+    if all([cell != 0 for row in board for cell in row]) and winner == 0:
         winner = -1  # Tie game
     return winner
 
@@ -49,7 +46,8 @@ def evaluate(board):
 def play_game():
     board, winner, counter = create_board(), 0, 1
     print("Initial board:")
-    print(board)
+    for row in board:
+        print(row)
 
     while winner == 0:
         for player in [1, 2]:
@@ -69,7 +67,8 @@ def play_game():
                     print("Invalid input. Please enter numbers only.")
 
             print(f"\nBoard after move {counter}:")
-            print(board)
+            for row in board:
+                print(row)
             counter += 1
             winner = evaluate(board)
             if winner != 0:
@@ -78,7 +77,7 @@ def play_game():
     return winner
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Welcome to the Tic-Tac-Toe game!")
     result = play_game()
 
