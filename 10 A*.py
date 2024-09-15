@@ -60,24 +60,36 @@ class Graph:
         return path
 
 def main():
-    width = int(input("Enter grid width: "))
-    height = int(input("Enter grid height: "))
+    # Hardcoded grid size
+    width = 5
+    height = 5
 
     g = Graph(width, height)
 
-    print("Enter the costs for each cell in the grid:")
+    # Hardcoded costs for each cell in the grid
+    costs = [
+        [1, 3, 1, 5, 2],
+        [1, 1, 1, 1, 1],
+        [4, 3, 1, 3, 4],
+        [2, 1, 2, 1, 2],
+        [3, 1, 1, 1, 1]
+    ]
+
+    # Set costs in the graph
     for y in range(height):
-        row_costs = list(map(int, input().split()))
         for x in range(width):
-            g.set_cost(x, y, row_costs[x])
+            g.set_cost(x, y, costs[y][x])
 
-    start_x, start_y = map(int, input("Enter the start coordinates (x y): ").split())
+    # Hardcoded start and goal coordinates
+    start_x, start_y = 0, 0
+    goal_x, goal_y = 4, 4
+
     g.set_start(start_x, start_y)
-
-    goal_x, goal_y = map(int, input("Enter the goal coordinates (x y): ").split())
     g.set_goal(goal_x, goal_y)
 
+    # Run A* algorithm
     path = g.a_star()
+
     print("Path found:")
     print(path)
 
