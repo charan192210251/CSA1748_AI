@@ -1,8 +1,8 @@
 class Graph():
     def __init__(self, vertices):
         self.V = vertices
-        self.graph = [[0 for column in range(vertices)]
-                      for row in range(vertices)]
+        self.graph = [[0 for column in range(vertices)] for row in range(vertices)]
+        self.colors_list = ["Red", "Green", "Blue", "Yellow", "Purple", "Orange", "Pink"]  # List of possible colors
 
     def isSafe(self, v, colour, c):
         for i in range(self.V):
@@ -13,31 +13,38 @@ class Graph():
     def graphColourUtil(self, m, colour, v):
         if v == self.V:
             return True
-        for c in range(1, m + 1):
+        for c in range(m):
             if self.isSafe(v, colour, c):
                 colour[v] = c
                 if self.graphColourUtil(m, colour, v + 1):
                     return True
-                colour[v] = 0
+                colour[v] = -1  # Reset the color if it doesn't work
 
     def graphColouring(self, m):
-        colour = [0] * self.V
+        colour = [-1] * self.V  # -1 indicates no color assigned yet
         if not self.graphColourUtil(m, colour, 0):
+            print("Solution does not exist.")
             return False
         print("Solution exists and the following are the assigned colours:")
         for c in colour:
-            print(c, end=' ')
+            print(self.colors_list[c], end=' ')
+        print()
         return True
 
-
 if __name__ == '__main__':
-    vertices = int(input("Enter number of vertices: "))
+    # Hardcoded number of vertices
+    vertices = 4
     g = Graph(vertices)
 
-    print("Enter the adjacency matrix row by row:")
-    for i in range(vertices):
-        g.graph[i] = list(map(int, input().split()))
+    # Hardcoded adjacency matrix
+    g.graph = [
+        [0, 1, 1, 1],
+        [1, 0, 1, 0],
+        [1, 1, 0, 1],
+        [1, 0, 1, 0]
+    ]
 
-    m = int(input("Enter number of colors: "))
+    # Hardcoded number of colors (use as many colors as available in the colors_list)
+    m = 3
 
     g.graphColouring(m)
