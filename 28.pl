@@ -1,40 +1,56 @@
-% Facts: symptom(Patient, Symptom)
-% Represent symptoms of different patients
-symptom(patient1, fever).
-symptom(patient1, cough).
-symptom(patient1, headache).
+% Define diseases and their corresponding symptoms
+disease(cold) :-
+    has_symptom(cough),
+    has_symptom(sneezing),
+    has_symptom(fever).
 
-symptom(patient2, fever).
-symptom(patient2, sore_throat).
+disease(flu) :-
+    has_symptom(fever),
+    has_symptom(headache),
+    has_symptom(body_ache).
 
-symptom(patient3, headache).
-symptom(patient3, runny_nose).
-symptom(patient3, cough).
+disease(covid19) :-
+    has_symptom(fever),
+    has_symptom(cough),
+    has_symptom(loss_of_taste_or_smell),
+    has_symptom(difficulty_breathing).
 
-% Facts: disease(Disease, SymptomList)
-% Represent diseases and their associated symptoms
-disease(flu, [fever, cough, headache]).
-disease(cold, [runny_nose, sore_throat, cough]).
-disease(migraine, [headache]).
+disease(allergy) :-
+    has_symptom(sneezing),
+    has_symptom(runny_nose),
+    has_symptom(itchy_eyes).
 
-% Rule: diagnose(Patient, Disease)
-% Diagnoses a disease based on the symptoms of the patient
-diagnose(Patient, Disease) :-
-    findall(Symptom, symptom(Patient, Symptom), Symptoms),
-    disease(Disease, SymptomList),
-    subset(SymptomList, Symptoms),
-    write('Diagnosis for '), write(Patient), write(': '), write(Disease), nl.
+disease(malaria) :-
+    has_symptom(fever),
+    has_symptom(shivering),
+    has_symptom(sweating),
+    has_symptom(fatigue).
 
-% Helper predicate to check if all elements of a list are in another list
-subset([], _).
-subset([H|T], List) :-
-    member(H, List),
-    subset(T, List).
+% Interact with user to ask for symptoms
+ask_symptom(Symptom) :-
+    format('Do you have ~w? (yes/no) ', [Symptom]),
+    read(Reply),
+    (Reply == yes -> assert(has_symptom(Symptom)) ; true).
 
-% Example queries
-% Query to diagnose patient1
-% ?- diagnose(patient1, Disease).
-% Query to diagnose patient2
-% ?- diagnose(patient2, Disease).
-% Query to diagnose patient3
-% ?- diagnose(patient3, Disease).
+% Start the diagnosis process
+diagnose :-
+    retractall(has_symptom(_)),  % Clear any previous symptoms
+    write('Let\'s diagnose your illness!'), nl,
+    ask_symptom(fever),
+    ask_symptom(cough),
+    ask_symptom(sneezing),
+    ask_symptom(headache),
+    ask_symptom(body_ache),
+    ask_symptom(loss_of_taste_or_smell),
+    ask_symptom(difficulty_breathing),
+    ask_symptom(runny_nose),
+    ask_symptom(itchy_eyes),
+    ask_symptom(shivering),
+    ask_symptom(sweating),
+    ask_symptom(fatigue),
+    (disease(Disease) -> format('You may have ~w.', [Disease]), nl;
+     write('Sorry, I could not diagnose your illness.'), nl).
+
+% To start the diagnosis, query:
+% ?- diagnose.
+
