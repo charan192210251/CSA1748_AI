@@ -1,38 +1,48 @@
 import random
+
 def display(room):
-    print(room)
-room = [
-    [1, 1, 1, 1],
-    [1, 1, 1, 1],
-    [1, 1, 1, 1],
-    [1, 1, 1, 1],
-]
-print("All the rooom are dirty")
+    for row in room:
+        print(' '.join(str(cell) for cell in row))
+    print()
+
+def initialize_room(size):
+    return [[random.choice([0, 1]) for _ in range(size)] for _ in range(size)]
+
+def clean_room(room):
+    size = len(room)
+    cleaned = 0
+    for x in range(size):
+        for y in range(size):
+            if room[x][y] == 1:
+                print(f"Vacuuming location ({x}, {y}) now.")
+                room[x][y] = 0
+                print(f"Cleaned ({x}, {y})")
+                cleaned += 1
+    return cleaned
+
+# User input for room size
+try:
+    size = int(input("Enter the size of the room (e.g., 4 for a 4x4 room): "))
+    if size <= 0:
+        raise ValueError("Size must be a positive integer.")
+except ValueError as e:
+    print(f"Invalid input: {e}")
+    size = 4  # Default size if input is invalid
+
+room = initialize_room(size)
+
+print("All rooms are dirty:")
 display(room)
-x = 0
-y = 0
-while x < 4:
-    while y < 4:
-        room[x][y] = random.choice([0,1])
-        y+=1
-    x+=1
-    y=0
-print("Before cleaning the room I detect all of these random dirts")
+
+print("Before cleaning, I detect all of these random dirts:")
 display(room)
-x =0
-y= 0
-z=0
-while x < 4:
-    while y < 4:
-        if room[x][y] == 1:
-            print("Vaccum in this location now,",x, y)
-            room[x][y] = 0
-            print("cleaned", x, y)
-            z+=1
-        y+=1
-    x+=1
-    y=0
-pro= (100-((z/16)*100))
+
+cleaned_count = clean_room(room)
+
+# Calculate performance
+total_cells = size * size
+performance = 100 - (cleaned_count / total_cells * 100)
+
 print("Room is clean now, Thanks for using : 3710933")
 display(room)
-print('performance=',pro,'%')
+print(f'Performance = {performance:.2f}%')
