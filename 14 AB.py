@@ -1,15 +1,14 @@
 MAX, MIN = 1000, -1000
 
-
 def minimax(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
     # Base case: return the value at the leaf node
     if depth == 3:
         return values[nodeIndex]
 
-        # Maximizing player's turn
+    # Maximizing player's turn
     if maximizingPlayer:
         best = MIN
-        for i in range(0, 2):
+        for i in range(2):  # Iterate over 0 and 1
             val = minimax(depth + 1, nodeIndex * 2 + i, False, values, alpha, beta)
             best = max(best, val)
             alpha = max(alpha, best)
@@ -17,10 +16,10 @@ def minimax(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
                 break
         return best
 
-        # Minimizing player's turn
+    # Minimizing player's turn
     else:
         best = MAX
-        for i in range(0, 2):
+        for i in range(2):  # Iterate over 0 and 1
             val = minimax(depth + 1, nodeIndex * 2 + i, True, values, alpha, beta)
             best = min(best, val)
             beta = min(beta, best)
@@ -28,17 +27,17 @@ def minimax(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
                 break
         return best
 
+def main():
+    # Hardcoded leaf node values
+    values = [3, 5, 6,9,1,2,0,4]  # Example leaf values
 
-if __name__ == "__main__":
-    # Taking user input for the leaf node values
-    values_input = input("Enter the leaf node values separated by spaces: ")
-
-    # Convert the input string into a list of integers
-    values = list(map(int, values_input.split()))
-
-    # Ensure the user entered 8 values (for a depth-3 binary tree)
+    # Ensure there are exactly 8 values (for a depth-3 binary tree)
     if len(values) != 8:
-        print("Please enter exactly 8 values.")
+        print("Please provide exactly 8 values.")
     else:
         # Calculate the optimal value using the minimax algorithm with alpha-beta pruning
-        print("The optimal value is:", minimax(0, 0, True, values, MIN, MAX))
+        optimal_value = minimax(0, 0, True, values, MIN, MAX)
+        print("The optimal value is:", optimal_value)
+
+if __name__ == "__main__":
+    main()
