@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-
 class Graph:
     def __init__(self):
         self.graph = defaultdict(list)
@@ -19,23 +18,28 @@ class Graph:
         visited = set()
         self.DFSUtil(v, visited)
 
-
 if __name__ == "__main__":
     g = Graph()
 
-    # Read number of vertices
-    num_vertices = int(input("Enter the number of vertices: "))
+    # Hardcoded number of vertices
+    num_vertices = 5
 
-    # Read number of edges
-    num_edges = int(input("Enter the number of edges: "))
+    # Hardcoded edges
+    edges = [
+        (0, 1),
+        (0, 2),
+        (1, 2),
+        (2, 0),
+        (2, 3),
+        (3, 3)
+    ]
 
-    print("Enter the edges (u v):")
-    for _ in range(num_edges):
-        u, v = map(int, input().split())
+    # Adding edges to the graph
+    for u, v in edges:
         g.addEdge(u, v)
 
-    # Read starting vertex for DFS
-    start_vertex = int(input("Enter the starting vertex for DFS: "))
+    # Hardcoded starting vertex for DFS
+    start_vertex = 2
 
-    print(f"Following is Depth First Traversal (starting from vertex {start_vertex})")
+    print(f"Following is Depth First Traversal (starting from vertex {start_vertex}):")
     g.DFS(start_vertex)
