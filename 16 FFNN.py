@@ -1,36 +1,40 @@
-import numpy as np
-
 def relu(n):
     return max(0, n)
 
+def dot_product(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
 def feedforward(input_data, weights):
-    node0 = relu(np.dot(input_data, weights[0]))
-    node1 = relu(np.dot(input_data, weights[1]))
-    node2 = relu(np.dot(np.array([node0, node1]), weights[2]))
-    node3 = relu(np.dot(np.array([node0, node1]), weights[3]))
-    output = relu(np.dot(np.array([node2, node3]), weights[4]))
+    # Compute activations for each layer
+    node0 = relu(dot_product(input_data, weights[0]))
+    node1 = relu(dot_product(input_data, weights[1]))
+    node2 = relu(dot_product([node0, node1], weights[2]))
+    node3 = relu(dot_product([node0, node1], weights[3]))
+    output = relu(dot_product([node2, node3], weights[4]))
     return output
 
-# User input for the number of inputs and weights
-num_inputs = int(input("Enter the number of input samples: "))
-input_size = int(input("Enter the size of each input sample: "))
+def main():
+    # Hardcoded input samples
+    inp = [
+        [1.0, 2.0, 3.0],
+        [4.0, 5.0, 6.0],
+        [7.0, 8.0, 9.0]
+    ]
 
-# Input data from user
-inp = []
-print("Enter the input samples (space-separated):")
-for i in range(num_inputs):
-    inp.append(list(map(float, input(f"Input {i+1}: ").split())))
+    # Hardcoded weights for each layer
+    weights = [
+        [0.1, 0.2, 0.3],  # Weights for node0
+        [0.4, 0.5, 0.6],  # Weights for node1
+        [0.7, 0.8],       # Weights for node2
+        [0.9, 1.0],       # Weights for node3
+        [1.1, 1.2]        # Weights for output
+    ]
 
-inp = np.array(inp)
+    # Feedforward process
+    print("\nFeed Forward Neural Network Output:")
+    for x in inp:
+        output = feedforward(x, weights)
+        print(f"Input: {x}, Output: {output}")
 
-# Weights input
-weights = []
-print("\nEnter weights for each layer node (space-separated for each weight vector):")
-for i in range(5):
-    weights.append(np.array(list(map(float, input(f"Weights for node {i}: ").split()))))
-
-# Feedforward process
-print("\nFeed Forward Neural Network Output:")
-for x in inp:
-    output = feedforward(x, weights)
-    print(f"Input: {x}, Output: {output}")
+if __name__ == "__main__":
+    main()
