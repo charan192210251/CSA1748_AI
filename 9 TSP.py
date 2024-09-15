@@ -1,7 +1,6 @@
 from sys import maxsize
 from itertools import permutations
 
-
 def travellingSalesmanProblem(graph, s):
     V = len(graph)
     vertex = [i for i in range(V) if i != s]
@@ -17,18 +16,19 @@ def travellingSalesmanProblem(graph, s):
         min_path = min(min_path, current_pathweight)
     return min_path
 
-
 if __name__ == "__main__":
-    # Read the number of vertices
-    V = int(input("Enter the number of vertices: "))
-    # Initialize the graph matrix
-    graph = []
-    print("Enter the adjacency matrix (one row per line, values separated by spaces):")
-    for _ in range(V):
-        row = list(map(int, input().split()))
-        graph.append(row)
+    # Hardcoded number of vertices
+    V = 4
 
-    # Read the starting vertex for TSP
-    s = int(input("Enter the starting vertex for TSP: "))
+    # Hardcoded adjacency matrix (graph)
+    graph = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+
+    # Hardcoded starting vertex for TSP
+    s = 0
 
     print("Minimum cost of visiting all vertices starting from vertex", s, "is:", travellingSalesmanProblem(graph, s))
