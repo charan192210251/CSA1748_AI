@@ -10,11 +10,18 @@ has_fur(tiger).
 
 can_fly(eagle).
 
-% Rules
+% Rules for classification
 mammal(X) :- animal(X), has_fur(X).
 bird(X) :- animal(X), can_fly(X).
 
+% Forward chaining procedure
+forward_chain :- 
+    (mammal(X), \+ known(mammal(X)) -> assertz(known(mammal(X)), write('Derived: mammal('), write(X), write(')'), nl, fail); true),
+    (bird(X), \+ known(bird(X)) -> assertz(known(bird(X)), write('Derived: bird('), write(X), write(')'), nl, fail); true).
+
+% Dynamic fact declaration to allow adding facts at runtime
 :- dynamic known/1.
+
 % Initial known facts
 known(animal(dog)).
 known(animal(cat)).
@@ -27,19 +34,12 @@ known(has_fur(tiger)).
 
 known(can_fly(eagle)).
 
-% Forward chaining procedure
-forward_chain :-
-    (rule(Rule), \+ call(Rule) -> assertz(Rule), write('Derived: '), write(Rule), nl, fail; true).
-
-% Rules
-rule(known(mammal(X))) :- known(animal(X)), known(has_fur(X)).
-rule(known(bird(X))) :- known(animal(X)), known(can_fly(X)).
-
-list_known_facts :-
+% Query to list all facts
+list_known_facts :- 
     known(Fact),
-    write(Fact), nl,
+    write(Fact), nl, 
     fail.
 list_known_facts.
 
-% Queries
+% Query procedure to trigger forward chaining and list known facts
 query :- forward_chain, nl, write('All known facts:'), nl, list_known_facts.
