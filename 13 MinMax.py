@@ -1,6 +1,5 @@
 import math
 
-
 def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth):
     # Base case: if the current depth is the target depth, return the score at this node
     if curDepth == targetDepth:
@@ -15,13 +14,9 @@ def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth):
         return min(minimax(curDepth + 1, nodeIndex * 2, True, scores, targetDepth),
                    minimax(curDepth + 1, nodeIndex * 2 + 1, True, scores, targetDepth))
 
-
 def main():
-    # Taking user input for scores
-    scores_input = input("Enter the leaf node scores separated by spaces: ")
-
-    # Convert the input string into a list of integers
-    scores = list(map(int, scores_input.split()))
+    # Hardcoded leaf node scores
+    scores = [3, 5, 6,9,1,2,0,4]  # Example leaf scores
 
     # Calculate the depth of the game tree
     treeDepth = int(math.log(len(scores), 2))
@@ -31,7 +26,6 @@ def main():
 
     # Print the result
     print("The optimal value is:", optimal_value)
-
 
 if __name__ == "__main__":
     main()
