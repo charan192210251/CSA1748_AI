@@ -1,55 +1,21 @@
-% State representation:
-% state(MonkeyPosition, BoxPosition, BananaPosition, MonkeyHoldingBanana)
-% - MonkeyPosition: ground or box
-% - BoxPosition: ground or under_shelf
-% - BananaPosition: shelf or not_on_shelf
-% - MonkeyHoldingBanana: true or false
-
 % Initial state
-initial_state(state(ground, ground, shelf, false)).
+initial_state(on_ground, box_underm, banana_hanging).
 
-% Goal state
-goal_state(state(_, _, not_on_shelf, true)).
+% Define actions that can be taken
+action(on_ground, push_box, box_under_banana).
+action(box_under_banana, climb, on_box).
+action(on_box, reach, banana_reached).
 
-% Actions
-% Move the box to under the shelf
-move_box(state(MonkeyPosition, ground, BananaPosition, MonkeyHoldingBanana),
-         state(MonkeyPosition, under_shelf, BananaPosition, MonkeyHoldingBanana)) :-
-    MonkeyPosition = ground.
+% Plan predicate to start the planning process
+plan(Plan) :-
+    initial_state(State1, box_underm, banana_hanging),
+    find_plan(State1, banana_reached, [], Plan).
 
-% Climb onto the box
-climb(state(ground, under_shelf, BananaPosition, MonkeyHoldingBanana),
-      state(box, under_shelf, BananaPosition, MonkeyHoldingBanana)).
+% Base case: Goal reached, return the accumulated plan
+find_plan(banana_reached, banana_reached, Plan, Plan).
 
-% Get the banana
-get_banana(state(box, under_shelf, shelf, false),
-           state(box, under_shelf, not_on_shelf, true)).
-
-% Check if the current state is the goal state
-solve(State, _) :-
-    goal_state(State),
-    write('Goal reached! The monkey is holding the banana.'),
-    nl.
-
-% Try moving the box and solve recursively
-solve(State, Path) :-
-    move_box(State, NewState),
-    \+ member(NewState, Path),
-    solve(NewState, [NewState|Path]).
-
-% Try climbing onto the box and solve recursively
-solve(State, Path) :-
-    climb(State, NewState),
-    \+ member(NewState, Path),
-    solve(NewState, [NewState|Path]).
-
-% Try getting the banana and solve recursively
-solve(State, Path) :-
-    get_banana(State, NewState),
-    \+ member(NewState, Path),
-    solve(NewState, [NewState|Path]).
-
-% Start solving from the initial state
-start :-
-    initial_state(InitialState),
-    solve(InitialState, [InitialState]).
+% Recursive case: Find the next action and accumulate it in the plan
+find_plan(State, Goal, Acc, Plan) :-
+    action(State, Action, NextState),
+    \+ member(Action, Acc),  % Ensure no repeated actions
+    find_plan(NextState, Goal, [Action | Acc], Plan).
